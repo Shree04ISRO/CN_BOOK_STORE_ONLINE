@@ -1,71 +1,87 @@
 # 📚 BookHaven — Online Book Store (Django)
 
-A full-stack Django web application for browsing and purchasing books.
+A full-stack Django web application for browsing and purchasing books, ready for production deployment.
 
-## 🚀 Quick Start
+---
 
-### 1. Install dependencies
+## 🚀 Deploy to Render (Free Hosting)
+
+### Step 1 — Push to GitHub
 ```bash
-pip install django Pillow requests
+git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
+git push -u origin main
 ```
 
-### 2. Apply migrations
-```bash
-python manage.py migrate
-```
+### Step 2 — Create a Render account
+Go to https://render.com and sign up (free).
 
-### 3. Create superuser (admin)
+### Step 3 — New Web Service
+1. Click **New → Web Service**
+2. Connect your GitHub account
+3. Select your repository
+4. Render will auto-detect `render.yaml` and fill in settings
+
+### Step 4 — Set Environment Variables
+In the Render dashboard → Environment tab, add:
+| Key | Value |
+|-----|-------|
+| `SECRET_KEY` | (click "Generate" for a random value) |
+| `DEBUG` | `False` |
+| `GEMINI_API_KEY` | your Google Gemini key (optional) |
+
+### Step 5 — Deploy!
+Click **Deploy**. Render will:
+- Install all packages from `requirements.txt`
+- Run `python manage.py collectstatic`
+- Run `python manage.py migrate`
+- Start the server with `gunicorn`
+
+Your site will be live at `https://bookhaven.onrender.com` (or similar).
+
+---
+
+## 🛠️ Create Admin User (after deploy)
+In Render dashboard → your service → **Shell** tab:
 ```bash
 python manage.py createsuperuser
 ```
 
-### 4. Seed sample data (optional)
-```bash
-python manage.py shell
-# Then paste the seed script from seed_data.py
-```
+---
 
-### 5. Run the server
+## 💻 Run Locally
 ```bash
+pip install -r requirements.txt
+python manage.py migrate
 python manage.py runserver
 ```
-
 Visit: http://127.0.0.1:8000
+Admin: http://127.0.0.1:8000/admin/
 
-## 🔑 Admin Panel
-- URL: http://127.0.0.1:8000/admin/
-- Default credentials: **admin / admin123** (change in production!)
-
-## 🤖 AI Book Summaries (Google Gemini)
-1. Get a free API key from https://makersuite.google.com/app/apikey
-2. Open `bookstore/settings.py`
-3. Replace `YOUR_GEMINI_API_KEY_HERE` with your actual key
+---
 
 ## 📁 Project Structure
 ```
 bookstore/
-├── bookstore/          # Main project config
-│   ├── settings.py
-│   └── urls.py
-├── books/              # Books app (models, views, admin)
-├── cart/               # Cart & Orders app
-├── subscribers/        # Newsletter subscribers
-├── templates/          # HTML templates
-│   ├── base.html
-│   ├── books/
-│   └── cart/
-├── static/css/         # Custom CSS
-├── media/              # Uploaded book covers
-└── db.sqlite3          # SQLite database
+├── bookstore/         ← Config (settings.py, urls.py)
+├── books/             ← Books app
+├── cart/              ← Cart & Orders
+├── subscribers/       ← Newsletter
+├── templates/         ← HTML templates
+├── static/            ← CSS, JS
+├── requirements.txt   ← Python packages
+├── build.sh           ← Render build script
+├── render.yaml        ← Render config
+└── .gitignore
 ```
 
 ## ✨ Features
-- 🏠 Home page with hero section, best sellers, new arrivals, audiobooks
-- 📚 Book listings with category filters
-- 🔍 Full-text search across title, author, description
-- 📖 Detailed book pages with AI-powered summaries
-- 🛒 Session-based cart with quantity management
-- 💳 Dummy checkout with order confirmation
-- 📧 Newsletter subscription
-- 🛠️ Full Django admin panel for managing everything
-- 📱 Responsive design (mobile-friendly)
+- Home with hero, best sellers, new arrivals, audiobooks
+- Category browsing & full-text search
+- Book detail page with AI summary (Google Gemini)
+- Session cart, checkout & order confirmation
+- Newsletter subscription
+- Full Django admin panel

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Sign In — BookHaven{% endblock %}
+{% block newsletter %}{% endblock %}
+
+{% block content %}
+<div style="min-height:80vh;display:flex;align-items:center;justify-content:center;padding:2rem;background:var(--cream);">
+  <div style="width:100%;max-width:420px;">
+
+    <div style="text-align:center;margin-bottom:2rem;">
+      <a href="{% url 'home' %}" style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;color:var(--gold);text-decoration:none;">Book<span style="color:var(--ink)">Haven</span></a>
+      <h1 style="font-family:'Playfair Display',serif;font-size:1.75rem;margin-top:0.5rem;color:var(--ink);">Welcome back</h1>
+      <p style="color:var(--muted);">Sign in to your account</p>
+    </div>
+
+    <div class="form-card">
+      <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <input type="text" name="username" class="form-control" placeholder="Your username" autofocus required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" name="password" class="form-control" placeholder="Your password" required>
+        </div>
+        {% if form.errors %}
+        <div class="alert alert-error">Invalid username or password. Please try again.</div>
+        {% endif %}
+        <button type="submit" class="btn-primary" style="width:100%;text-align:center;border:none;cursor:pointer;font-size:1rem;padding:0.875rem;margin-top:0.5rem;">Sign In</button>
+      </form>
+      <p style="text-align:center;margin-top:1.25rem;color:var(--muted);font-size:0.9rem;">
+        Don't have an account? <a href="{% url 'register' %}" style="color:var(--gold);font-weight:600;">Create one free</a>
+      </p>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

@@ -25,12 +25,34 @@
         <input type="text" name="q" placeholder="Search books, authors…">
         <button type="submit">Search</button>
       </form>
+      <!-- Cart -->
       <a href="{% url 'cart' %}" class="nav-links cart-btn" style="position:relative;display:inline-flex;align-items:center;">
         🛒
         {% if cart_count > 0 %}
         <span class="cart-badge">{{ cart_count }}</span>
         {% endif %}
       </a>
+      <!-- User Auth -->
+      {% if user.is_authenticated %}
+      <div class="user-menu-wrap" style="position:relative;">
+        <button class="user-avatar-btn" onclick="toggleUserMenu()" style="width:38px;height:38px;border-radius:50%;background:{% if user.profile %}{{ user.profile.avatar_color }}{% else %}var(--gold){% endif %};border:none;cursor:pointer;font-family:'Playfair Display',serif;font-weight:900;color:#fff;font-size:0.95rem;display:flex;align-items:center;justify-content:center;">
+          {{ user.first_name|first|upper|default:user.username|first|upper }}
+        </button>
+        <div id="userDropdown" style="display:none;position:absolute;right:0;top:48px;background:#fff;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.15);min-width:180px;z-index:999;overflow:hidden;">
+          <div style="padding:1rem;border-bottom:1px solid var(--border);">
+            <div style="font-weight:700;color:var(--ink);font-size:0.9rem;">{{ user.get_full_name|default:user.username }}</div>
+            <div style="font-size:0.78rem;color:var(--muted);">{{ user.email }}</div>
+          </div>
+          <a href="{% url 'profile' %}" style="display:block;padding:0.75rem 1rem;color:var(--ink);text-decoration:none;font-size:0.9rem;transition:background 0.2s;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background='transparent'">👤 My Profile</a>
+          <a href="{% url 'cart' %}" style="display:block;padding:0.75rem 1rem;color:var(--ink);text-decoration:none;font-size:0.9rem;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background='transparent'">🛒 My Cart</a>
+          {% if user.is_staff %}<a href="/admin/" style="display:block;padding:0.75rem 1rem;color:var(--ink);text-decoration:none;font-size:0.9rem;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background='transparent'">⚙️ Admin Panel</a>{% endif %}
+          <a href="{% url 'logout' %}" style="display:block;padding:0.75rem 1rem;color:#c0573a;text-decoration:none;font-size:0.9rem;border-top:1px solid var(--border);" onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='transparent'">🚪 Sign Out</a>
+        </div>
+      </div>
+      {% else %}
+      <a href="{% url 'login' %}" style="color:rgba(255,255,255,0.8);text-decoration:none;font-size:0.875rem;font-weight:500;padding:0.5rem 1rem;border:1px solid rgba(255,255,255,0.25);border-radius:999px;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.25)';this.style.color='rgba(255,255,255,0.8)'">Sign In</a>
+      <a href="{% url 'register' %}" style="background:var(--gold);color:var(--ink);text-decoration:none;font-size:0.875rem;font-weight:700;padding:0.5rem 1rem;border-radius:999px;transition:all 0.2s;">Register</a>
+      {% endif %}
     </div>
   </div>
 </nav>
@@ -45,7 +67,6 @@
 
 {% block content %}{% endblock %}
 
-<!-- Newsletter -->
 {% block newsletter %}
 <section class="newsletter">
   <div class="section-inner">
@@ -86,18 +107,32 @@
     <div>
       <div class="footer-heading">Account</div>
       <ul class="footer-links">
+        {% if user.is_authenticated %}
+        <li><a href="{% url 'profile' %}">My Profile</a></li>
         <li><a href="{% url 'cart' %}">My Cart</a></li>
+        <li><a href="{% url 'logout' %}">Sign Out</a></li>
+        {% else %}
+        <li><a href="{% url 'login' %}">Sign In</a></li>
+        <li><a href="{% url 'register' %}">Register</a></li>
+        {% endif %}
         <li><a href="/admin/">Admin Panel</a></li>
       </ul>
     </div>
   </div>
-  <div class="footer-bottom">
-    © 2024 BookHaven. Built with Django &amp; ❤️ for readers everywhere.
-  </div>
+  <div class="footer-bottom">© 2024 BookHaven. Built with Django &amp; ❤️ for readers everywhere.</div>
 </footer>
 
 <script>
-// Auto-hide messages
+function toggleUserMenu() {
+  const d = document.getElementById('userDropdown');
+  d.style.display = d.style.display === 'none' ? 'block' : 'none';
+}
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.user-menu-wrap')) {
+    const d = document.getElementById('userDropdown');
+    if (d) d.style.display = 'none';
+  }
+});
 setTimeout(() => {
   document.querySelectorAll('.alert').forEach(el => {
     el.style.transition = 'opacity 0.5s';

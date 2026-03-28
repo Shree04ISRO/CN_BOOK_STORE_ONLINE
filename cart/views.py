@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
 from books.models import Book
 from .models import CartItem, Order
 
@@ -41,18 +41,23 @@ def update_cart(request, pk):
         item.delete()
     return redirect('cart')
 
+@login_required
 def checkout(request):
     session_key = _get_session(request)
     items = CartItem.objects.filter(session_key=session_key).select_related('book')
     total = sum(item.total_price for item in items)
-    
+
     if not items:
         messages.warning(request, 'Your cart is empty!')
         return redirect('cart')
-    
+
+    user = request.user
+    profile = getattr(user, 'profile', None)
+
     if request.method == 'POST':
         order = Order.objects.create(
             session_key=session_key,
+            user=user,
             full_name=request.POST.get('full_name'),
             email=request.POST.get('email'),
             address=request.POST.get('address'),
@@ -62,8 +67,15 @@ def checkout(request):
         )
         CartItem.objects.filter(session_key=session_key).delete()
         return redirect('order_success', order_id=order.pk)
-    
-    return render(request, 'cart/checkout.html', {'items': items, 'total': total})
+
+    # Pre-fill from user profile
+    prefill = {
+        'full_name': user.get_full_name() or user.username,
+        'email': user.email,
+        'address': profile.address if profile else '',
+        'city': profile.city if profile else '',
+    }
+    return render(request, 'cart/checkout.html', {'items': items, 'total': total, 'prefill': prefill})
 
 def order_success(request, order_id):
     order = get_object_or_404(Order, pk=order_id)

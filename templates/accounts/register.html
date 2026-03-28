@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Create Account — BookHaven{% endblock %}
+{% block newsletter %}{% endblock %}
+
+{% block content %}
+<div style="min-height:80vh;display:flex;align-items:center;justify-content:center;padding:2rem;background:var(--cream);">
+  <div style="width:100%;max-width:500px;">
+    
+    <div style="text-align:center;margin-bottom:2rem;">
+      <a href="{% url 'home' %}" style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;color:var(--gold);text-decoration:none;">Book<span style="color:var(--ink)">Haven</span></a>
+      <h1 style="font-family:'Playfair Display',serif;font-size:1.75rem;margin-top:0.5rem;color:var(--ink);">Create your account</h1>
+      <p style="color:var(--muted);">Join thousands of readers today</p>
+    </div>
+
+    <div class="form-card">
+      <form method="POST">
+        {% csrf_token %}
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">First Name</label>
+            <input type="text" name="first_name" class="form-control" placeholder="John" value="{{ form.first_name.value|default:'' }}" required>
+            {% if form.first_name.errors %}<div style="color:#c0573a;font-size:0.8rem;margin-top:0.25rem;">{{ form.first_name.errors.0 }}</div>{% endif %}
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            <input type="text" name="last_name" class="form-control" placeholder="Doe" value="{{ form.last_name.value|default:'' }}" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <input type="text" name="username" class="form-control" placeholder="johndoe" value="{{ form.username.value|default:'' }}" required>
+          {% if form.username.errors %}<div style="color:#c0573a;font-size:0.8rem;margin-top:0.25rem;">{{ form.username.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" name="email" class="form-control" placeholder="john@example.com" value="{{ form.email.value|default:'' }}" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" name="password1" class="form-control" placeholder="Min. 8 characters" required>
+          {% if form.password1.errors %}<div style="color:#c0573a;font-size:0.8rem;margin-top:0.25rem;">{{ form.password1.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirm Password</label>
+          <input type="password" name="password2" class="form-control" placeholder="Repeat password" required>
+          {% if form.password2.errors %}<div style="color:#c0573a;font-size:0.8rem;margin-top:0.25rem;">{{ form.password2.errors.0 }}</div>{% endif %}
+        </div>
+        <button type="submit" class="btn-primary" style="width:100%;text-align:center;border:none;cursor:pointer;font-size:1rem;padding:0.875rem;margin-top:0.5rem;">Create Account</button>
+      </form>
+      <p style="text-align:center;margin-top:1.25rem;color:var(--muted);font-size:0.9rem;">
+        Already have an account? <a href="{% url 'login' %}" style="color:var(--gold);font-weight:600;">Sign in</a>
+      </p>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
