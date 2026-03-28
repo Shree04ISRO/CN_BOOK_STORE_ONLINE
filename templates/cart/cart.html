@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}My Cart — BookHaven{% endblock %}
+{% block content %}
+<div class="cart-page">
+  <h1 class="page-title">🛒 My Cart</h1>
+
+  {% if items %}
+  <div class="cart-grid">
+    <div class="cart-items">
+      {% for item in items %}
+      <div class="cart-item">
+        <div class="cart-item-cover">
+          {% if item.book.cover_image %}
+          <img src="{{ item.book.cover_image.url }}" alt="{{ item.book.title }}">
+          {% else %}
+          <div class="mini-cover" style="background:{{ item.book.cover_color }};height:100%;">📚</div>
+          {% endif %}
+        </div>
+        <div class="cart-item-info">
+          <div class="cart-item-title">{{ item.book.title }}</div>
+          <div class="cart-item-author">{{ item.book.author }}</div>
+          <form method="POST" action="{% url 'update_cart' item.pk %}" class="qty-form">
+            {% csrf_token %}
+            <input type="number" name="quantity" value="{{ item.quantity }}" min="0" max="99" class="qty-input">
+            <button type="submit" class="btn-sm btn-update">Update</button>
+          </form>
+        </div>
+        <div>
+          <div class="cart-item-price">₹{{ item.total_price }}</div>
+          <a href="{% url 'remove_from_cart' item.pk %}" class="btn-sm btn-remove" style="display:block;margin-top:0.5rem;text-align:center;text-decoration:none;">Remove</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div>
+      <div class="cart-summary">
+        <div class="summary-title">Order Summary</div>
+        {% for item in items %}
+        <div class="summary-row">
+          <span>{{ item.book.title|truncatechars:25 }} × {{ item.quantity }}</span>
+          <span>₹{{ item.total_price }}</span>
+        </div>
+        {% endfor %}
+        <div class="summary-total">
+          <span>Total</span>
+          <span>₹{{ total }}</span>
+        </div>
+        <a href="{% url 'checkout' %}" class="btn-checkout">Proceed to Checkout →</a>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon">🛒</div>
+    <h3>Your cart is empty</h3>
+    <p style="margin-bottom:1.5rem;">Discover amazing books to fill it up!</p>
+    <a href="{% url 'book_list' %}" class="btn-primary">Browse Books</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

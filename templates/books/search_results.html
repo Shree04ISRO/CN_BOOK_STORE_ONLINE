@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Search: {{ query }} — BookHaven{% endblock %}
+{% block content %}
+<div class="search-page">
+  <div class="search-header">
+    <h1 class="section-title">Search Results for "<span style="color:var(--gold)">{{ query }}</span>"</h1>
+    <p class="search-count">{{ books|length }} result{{ books|length|pluralize }} found</p>
+  </div>
+  {% if books %}
+  <div class="books-grid">
+    {% for book in books %}{% include 'books/_book_card.html' %}{% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon">🔍</div>
+    <h3>No results found</h3>
+    <p>Try different keywords or browse our <a href="{% url 'book_list' %}">full collection</a>.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}{% if page_title %}{{ page_title }}{% elif category_obj %}{{ category_obj.name }}{% else %}All Books{% endif %} — BookHaven{% endblock %}
+
+{% block content %}
+<div class="book-list-page">
+  <div class="section-header" style="margin-bottom:1.5rem;">
+    <div>
+      <h1 class="section-title">
+        {% if page_title %}{{ page_title }}
+        {% elif category_obj %}{{ category_obj.icon }} {{ category_obj.name }}
+        {% else %}📚 All <span>Books</span>{% endif %}
+      </h1>
+      <p class="section-subtitle">{{ books|length }} book{{ books|length|pluralize }} found</p>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <a href="{% url 'book_list' %}" class="filter-btn {% if not current_category %}active{% endif %}">All</a>
+    {% for cat in categories %}
+    <a href="{% url 'books_by_category' cat.slug %}" class="filter-btn {% if current_category == cat.slug %}active{% endif %}">{{ cat.icon }} {{ cat.name }}</a>
+    {% endfor %}
+  </div>
+
+  {% if books %}
+  <div class="books-grid">
+    {% for book in books %}
+    {% include 'books/_book_card.html' %}
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon">📭</div>
+    <h3>No books found</h3>
+    <p>Try a different category or check back later.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

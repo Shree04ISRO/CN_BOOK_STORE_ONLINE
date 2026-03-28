@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}BookHaven — Your Literary Sanctuary{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <h1>Discover Your Next <em>Great Read</em></h1>
+      <p>Thousands of handpicked books across every genre — from timeless classics to today's bestsellers. Your next adventure starts here.</p>
+      <div class="hero-btns">
+        <a href="{% url 'book_list' %}" class="btn-primary">Browse All Books</a>
+        <a href="{% url 'best_sellers' %}" class="btn-outline">View Best Sellers</a>
+      </div>
+    </div>
+    <div class="hero-books">
+      {% for book in best_sellers|slice:":4" %}
+      <a href="{% url 'book_detail' book.pk %}" class="hero-book" style="transform: rotate({% if forloop.counter == 1 %}-3{% elif forloop.counter == 3 %}2{% else %}0{% endif %}deg)">
+        {% if book.cover_image %}
+        <img class="hero-book-cover {% if forloop.counter == 2 %}tall{% endif %}" src="{{ book.cover_image.url }}" alt="{{ book.title }}" style="object-fit:cover;">
+        {% else %}
+        <div class="hero-book-cover {% if forloop.counter == 2 %}tall{% endif %}" style="background:{{ book.cover_color }};">
+          <span class="book-icon">📖</span>
+          <div class="book-title-small">{{ book.title|truncatechars:30 }}</div>
+          <div class="book-author-small">{{ book.author }}</div>
+        </div>
+        {% endif %}
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="section section-alt">
+  <div class="section-inner">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">Browse by <span>Genre</span></h2>
+        <p class="section-subtitle">Find your perfect category</p>
+      </div>
+      <a href="{% url 'book_list' %}" class="view-all">All genres →</a>
+    </div>
+    <div class="categories-grid">
+      {% for cat in categories %}
+      <a href="{% url 'books_by_category' cat.slug %}" class="category-card">
+        <span class="category-icon">{{ cat.icon }}</span>
+        <div class="category-name">{{ cat.name }}</div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- BEST SELLERS -->
+{% if best_sellers %}
+<section class="section">
+  <div class="section-inner">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">🏆 Best <span>Sellers</span></h2>
+        <p class="section-subtitle">What everyone's reading right now</p>
+      </div>
+      <a href="{% url 'best_sellers' %}" class="view-all">View all →</a>
+    </div>
+    <div class="books-grid">
+      {% for book in best_sellers %}
+      {% include 'books/_book_card.html' with badge="Best Seller" %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- NEW ARRIVALS -->
+{% if new_arrivals %}
+<section class="section section-alt">
+  <div class="section-inner">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">✨ New <span>Arrivals</span></h2>
+        <p class="section-subtitle">Fresh off the press</p>
+      </div>
+      <a href="{% url 'new_arrivals' %}" class="view-all">View all →</a>
+    </div>
+    <div class="books-grid">
+      {% for book in new_arrivals %}
+      {% include 'books/_book_card.html' with badge="New" badge_class="badge-new" %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- AUDIOBOOKS -->
+{% if audiobooks %}
+<section class="section">
+  <div class="section-inner">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">🎧 Audio<span>books</span></h2>
+        <p class="section-subtitle">Listen while you go</p>
+      </div>
+      <a href="{% url 'audiobooks' %}" class="view-all">View all →</a>
+    </div>
+    <div class="books-grid">
+      {% for book in audiobooks %}
+      {% include 'books/_book_card.html' with badge="Audio" badge_class="badge-audio" %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,32 @@
+<div class="book-card">
+  <div class="book-cover-wrap">
+    {% if book.cover_image %}
+    <img class="book-cover-img" src="{{ book.cover_image.url }}" alt="{{ book.title }}">
+    {% else %}
+    <div class="book-cover-placeholder" style="background: {{ book.cover_color }};">
+      <span class="book-icon">📚</span>
+      <span class="book-title-small">{{ book.title|truncatechars:40 }}</span>
+      <span class="book-author-small">{{ book.author }}</span>
+    </div>
+    {% endif %}
+    {% if badge %}
+    <span class="book-badge {% if badge_class %}{{ badge_class }}{% endif %}">{{ badge }}</span>
+    {% endif %}
+    <div class="book-overlay">
+      <a href="{% url 'book_detail' book.pk %}" class="overlay-btn">Details</a>
+      <a href="{% url 'add_to_cart' book.pk %}" class="overlay-btn cart-add">+ Cart</a>
+    </div>
+  </div>
+  <div class="book-info">
+    <a href="{% url 'book_detail' book.pk %}" style="text-decoration:none;">
+      <div class="book-info-title">{{ book.title|truncatechars:35 }}</div>
+    </a>
+    <div class="book-info-author">{{ book.author }}</div>
+    <div class="book-info-footer">
+      <span class="book-price">₹{{ book.price }}</span>
+      <span class="book-stars">
+        {% for i in book.stars_range %}{% if i <= book.rating|floatformat:"0"|add:"0" %}★{% else %}☆{% endif %}{% endfor %}
+      </span>
+    </div>
+  </div>
+</div>

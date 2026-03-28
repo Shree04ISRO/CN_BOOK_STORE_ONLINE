@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}BookHaven — Your Literary Sanctuary{% endblock %}</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="{% url 'home' %}" class="nav-brand">Book<span>Haven</span></a>
+    <div class="nav-links">
+      <a href="{% url 'home' %}">Home</a>
+      <a href="{% url 'book_list' %}">All Books</a>
+      <a href="{% url 'best_sellers' %}">Best Sellers</a>
+      <a href="{% url 'new_arrivals' %}">New Arrivals</a>
+      <a href="{% url 'audiobooks' %}">Audiobooks</a>
+    </div>
+    <div class="nav-search">
+      <form action="{% url 'search' %}" method="GET" style="display:flex;gap:0.5rem;">
+        <input type="text" name="q" placeholder="Search books, authors…">
+        <button type="submit">Search</button>
+      </form>
+      <a href="{% url 'cart' %}" class="nav-links cart-btn" style="position:relative;display:inline-flex;align-items:center;">
+        🛒
+        {% if cart_count > 0 %}
+        <span class="cart-badge">{{ cart_count }}</span>
+        {% endif %}
+      </a>
+    </div>
+  </div>
+</nav>
+
+{% if messages %}
+<div class="messages-container">
+  {% for message in messages %}
+  <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% block content %}{% endblock %}
+
+<!-- Newsletter -->
+{% block newsletter %}
+<section class="newsletter">
+  <div class="section-inner">
+    <h2>Stay in the <span>Story</span></h2>
+    <p>Get notified about new arrivals, exclusive deals, and curated reading lists.</p>
+    <form class="newsletter-form" action="{% url 'subscribe' %}" method="POST">
+      {% csrf_token %}
+      <input type="email" name="email" placeholder="your@email.com" required>
+      <button type="submit">Subscribe Free</button>
+    </form>
+  </div>
+</section>
+{% endblock %}
+
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">Book<span>Haven</span></div>
+      <p class="footer-desc">Your literary sanctuary — discover, explore, and fall in love with books across every genre.</p>
+    </div>
+    <div>
+      <div class="footer-heading">Browse</div>
+      <ul class="footer-links">
+        <li><a href="{% url 'book_list' %}">All Books</a></li>
+        <li><a href="{% url 'best_sellers' %}">Best Sellers</a></li>
+        <li><a href="{% url 'new_arrivals' %}">New Arrivals</a></li>
+        <li><a href="{% url 'audiobooks' %}">Audiobooks</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-heading">Genres</div>
+      <ul class="footer-links">
+        {% for cat in categories|slice:":4" %}
+        <li><a href="{% url 'books_by_category' cat.slug %}">{{ cat.name }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div>
+      <div class="footer-heading">Account</div>
+      <ul class="footer-links">
+        <li><a href="{% url 'cart' %}">My Cart</a></li>
+        <li><a href="/admin/">Admin Panel</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    © 2024 BookHaven. Built with Django &amp; ❤️ for readers everywhere.
+  </div>
+</footer>
+
+<script>
+// Auto-hide messages
+setTimeout(() => {
+  document.querySelectorAll('.alert').forEach(el => {
+    el.style.transition = 'opacity 0.5s';
+    el.style.opacity = '0';
+    setTimeout(() => el.remove(), 500);
+  });
+}, 3500);
+</script>
+
+{% block extra_js %}{% endblock %}
+</body>
+</html>

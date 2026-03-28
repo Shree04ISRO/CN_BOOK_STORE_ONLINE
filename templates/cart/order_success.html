@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Order Confirmed — BookHaven{% endblock %}
+{% block newsletter %}{% endblock %}
+{% block content %}
+<div class="success-page">
+  <div class="success-icon">🎉</div>
+  <h1>Order Confirmed!</h1>
+  <p style="color:var(--muted);margin-bottom:2rem;">Thank you, <strong>{{ order.full_name }}</strong>! Your order #{{ order.pk }} has been placed successfully.</p>
+  <div class="form-card" style="text-align:left;max-width:400px;margin:0 auto 2rem;">
+    <div class="summary-row"><span>Order ID</span><strong>#{{ order.pk }}</strong></div>
+    <div class="summary-row"><span>Email</span><span>{{ order.email }}</span></div>
+    <div class="summary-row"><span>Ship to</span><span>{{ order.city }}</span></div>
+    <div class="summary-total"><span>Total Paid</span><span>₹{{ order.total_amount }}</span></div>
+  </div>
+  <a href="{% url 'home' %}" class="btn-primary">Continue Shopping</a>
+</div>
+{% endblock %}
